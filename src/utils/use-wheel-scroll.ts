@@ -1,25 +1,25 @@
-import { RefObject } from "react";
-import { useDomEvent, MotionValue } from "framer-motion";
-import { spring } from "popmotion";
-import { mix } from "@popmotion/popcorn";
-import { debounce } from "lodash";
+import {RefObject} from 'react'
+import {useDomEvent, MotionValue} from 'framer-motion'
+import {spring} from 'popmotion'
+import {mix} from '@popmotion/popcorn'
+import {debounce} from 'lodash'
 
 interface Constraints {
-  top: number;
-  bottom: number;
+  top: number
+  bottom: number
 }
 
 // Absolute distance a wheel scroll event can travel outside of
 // the defined constraints before we fire a "snap back" animation
-const deltaThreshold = 5;
+const deltaThreshold = 5
 
 // If wheel event fires beyond constraints, multiple the delta by this amount
-const elasticFactor = 0.2;
+const elasticFactor = 0.2
 
 function springTo(value: MotionValue, from: number, to: number) {
-  if (value.isAnimating()) return;
+  if (value.isAnimating()) return
 
-  value.start((complete) => {
+  value.start(complete => {
     const animation = spring({
       from,
       to,
@@ -29,13 +29,13 @@ function springTo(value: MotionValue, from: number, to: number) {
     }).start({
       update: (v: number) => value.set(v),
       complete,
-    });
+    })
 
-    return () => animation.stop();
-  });
+    return () => animation.stop()
+  })
 }
 
-const debouncedSpringTo = debounce(springTo, 100);
+const debouncedSpringTo = debounce(springTo, 100)
 
 /**
  * Re-implements wheel scroll for overlflow: hidden elements.
@@ -65,48 +65,48 @@ export function useWheelScroll(
   y: MotionValue<number>,
   constraints: Constraints | null,
   onWheelCallback: (e: WheelEvent) => void,
-  isActive: boolean
+  isActive: boolean,
 ) {
   const onWheel = (event: WheelEvent) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    const currentY = y.get();
-    let newY = currentY - event.deltaY;
-    let startedAnimation = false;
+    const currentY = y.get()
+    let newY = currentY - event.deltaY
+    let startedAnimation = false
     const isWithinBounds =
-      constraints && newY >= constraints.top && newY <= constraints.bottom;
+      constraints && newY >= constraints.top && newY <= constraints.bottom
 
     if (constraints && !isWithinBounds) {
-      newY = mix(currentY, newY, elasticFactor);
+      newY = mix(currentY, newY, elasticFactor)
 
       if (newY < constraints.top) {
         if (event.deltaY <= deltaThreshold) {
-          springTo(y, newY, constraints.top);
-          startedAnimation = true;
+          springTo(y, newY, constraints.top)
+          startedAnimation = true
         } else {
-          debouncedSpringTo(y, newY, constraints.top);
+          debouncedSpringTo(y, newY, constraints.top)
         }
       }
 
       if (newY > constraints.bottom) {
         if (event.deltaY >= -deltaThreshold) {
-          springTo(y, newY, constraints.bottom);
-          startedAnimation = true;
+          springTo(y, newY, constraints.bottom)
+          startedAnimation = true
         } else {
-          debouncedSpringTo(y, newY, constraints.bottom);
+          debouncedSpringTo(y, newY, constraints.bottom)
         }
       }
     }
 
     if (!startedAnimation) {
-      y.stop();
-      y.set(newY);
+      y.stop()
+      y.set(newY)
     } else {
-      debouncedSpringTo.cancel();
+      debouncedSpringTo.cancel()
     }
 
-    onWheelCallback(event);
-  };
+    onWheelCallback(event)
+  }
 
-  useDomEvent(ref, "wheel", isActive && onWheel, { passive: false });
+  useDomEvent(ref, 'wheel', isActive && onWheel, {passive: false})
 }

@@ -1,8 +1,8 @@
 import * as React from 'react'
-import {Card} from './components/card'
+import {Card} from './card'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 
-interface CardData {
+export interface CardData {
   id: string
   category: string
   title: string
@@ -10,7 +10,18 @@ interface CardData {
   backgroundColor: string
 }
 
-const List = ({match, history}) => (
+interface ListProps {
+  match: {
+    params: {
+      id: string
+    }
+  }
+  history: {
+    push: (route: string) => void
+  }
+}
+
+const List = ({match, history}: ListProps) => (
   <ul className="card-list">
     {cardData.map(card => (
       <Card
