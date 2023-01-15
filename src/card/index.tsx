@@ -6,10 +6,11 @@ import {useInvertedBorderRadius} from '../utils/use-inverted-border-radius'
 import {ContentPlaceholder} from './ContentPlaceholder'
 import {Title} from './Title'
 import {Overlay} from './Overlay'
+import {useOnClickOutside} from '../hooks/useCliciOutside'
 // import {Image} from './Image'
 import {openSpring, closeSpring} from './animations'
-import {useScrollConstraints} from '../utils/use-scroll-constrains'
-import {useWheelScroll} from '../utils/use-wheel-scroll'
+// import {useScrollConstraints} from '../utils/use-scroll-constrains'
+// import {useWheelScroll} from '../utils/use-wheel-scroll'
 
 interface Props extends CardData {
   isSelected: boolean
@@ -39,7 +40,10 @@ export const Card = memo(
 
     // We'll use the opened card element to calculate the scroll constraints
     const cardRef = useRef(null)
-    const constraints = useScrollConstraints(cardRef, isSelected)
+    useOnClickOutside(cardRef, () => {
+      isSelected && history.push('/')
+    })
+    // const constraints = useScrollConstraints(cardRef, isSelected)
 
     function checkSwipeToDismiss() {
       y.get() > dismissDistance && history.push('/')
@@ -54,17 +58,17 @@ export const Card = memo(
     }
 
     // When this card is selected, attach a wheel event listener
-    const containerRef = useRef(null)
-    useWheelScroll(
-      containerRef,
-      y,
-      constraints,
-      checkSwipeToDismiss,
-      isSelected,
-    )
+    // const containerRef = useRef(null)
+    // useWheelScroll(
+    //   containerRef,
+    //   y,
+    //   constraints,
+    //   checkSwipeToDismiss,
+    //   isSelected,
+    // )
 
     return (
-      <li ref={containerRef} className={`card`}>
+      <li className={`card`}>
         <Overlay isSelected={isSelected} />
         <div className={`card-content-container ${isSelected && 'open'}`}>
           <motion.div
@@ -72,9 +76,9 @@ export const Card = memo(
             className="card-content"
             style={{...inverted, zIndex, y}}
             layoutTransition={isSelected ? openSpring : closeSpring}
-            drag={isSelected ? 'y' : false}
-            dragConstraints={constraints}
-            onDrag={checkSwipeToDismiss}
+            // drag={isSelected ? 'y' : false}
+            // dragConstraints={constraints}
+            // onDrag={checkSwipeToDismiss}
             onUpdate={checkZIndex}
           >
             {/* <Image
