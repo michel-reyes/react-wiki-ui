@@ -6,11 +6,9 @@ import {useInvertedBorderRadius} from '../utils/use-inverted-border-radius'
 import {ContentPlaceholder} from './ContentPlaceholder'
 import {Title} from './Title'
 import {Overlay} from './Overlay'
-import {useOnClickOutside} from '../hooks/useCliciOutside'
+import {useOnClickOutside} from '../hooks/useClickOutside'
 // import {Image} from './Image'
 import {openSpring, closeSpring} from './animations'
-// import {useScrollConstraints} from '../utils/use-scroll-constrains'
-// import {useWheelScroll} from '../utils/use-wheel-scroll'
 
 interface Props extends CardData {
   isSelected: boolean
@@ -18,8 +16,6 @@ interface Props extends CardData {
     push: (route: string) => void
   }
 }
-
-const dismissDistance = 150
 
 // eslint-disable-next-line react/display-name
 export const Card = memo(
@@ -43,11 +39,6 @@ export const Card = memo(
     useOnClickOutside(cardRef, () => {
       isSelected && history.push('/')
     })
-    // const constraints = useScrollConstraints(cardRef, isSelected)
-
-    function checkSwipeToDismiss() {
-      y.get() > dismissDistance && history.push('/')
-    }
 
     function checkZIndex(latest: any) {
       if (isSelected) {
@@ -56,16 +47,6 @@ export const Card = memo(
         zIndex.set(0)
       }
     }
-
-    // When this card is selected, attach a wheel event listener
-    // const containerRef = useRef(null)
-    // useWheelScroll(
-    //   containerRef,
-    //   y,
-    //   constraints,
-    //   checkSwipeToDismiss,
-    //   isSelected,
-    // )
 
     return (
       <li className={`card`}>
@@ -76,9 +57,6 @@ export const Card = memo(
             className="card-content"
             style={{...inverted, zIndex, y}}
             layoutTransition={isSelected ? openSpring : closeSpring}
-            // drag={isSelected ? 'y' : false}
-            // dragConstraints={constraints}
-            // onDrag={checkSwipeToDismiss}
             onUpdate={checkZIndex}
           >
             {/* <Image
