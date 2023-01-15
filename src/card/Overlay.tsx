@@ -2,7 +2,11 @@ import React from 'react'
 import {motion} from 'framer-motion'
 import {Link} from 'react-router-dom'
 
-const Overlay = ({isSelected}) => (
+type Props = {
+  isSelected: boolean
+}
+
+const Overlay = ({isSelected}: Props) => (
   <motion.div
     initial={false}
     animate={{opacity: isSelected ? 1 : 0}}

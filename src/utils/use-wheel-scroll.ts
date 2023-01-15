@@ -108,5 +108,7 @@ export function useWheelScroll(
     onWheelCallback(event)
   }
 
-  useDomEvent(ref, 'wheel', isActive && onWheel, {passive: false})
+  const logic = (isActive && onWheel) as any
+
+  useDomEvent(ref, 'wheel', logic, {passive: false})
 }
